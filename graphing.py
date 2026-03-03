@@ -7,6 +7,7 @@ import matplotlib.pyplot as plt
 # 1. Define the adjacency matrix
 # A = [[0, 1, 1],
 #      [1, 0, 0],
+
 #      [0, 1, 0]]
 # Edges: (0 -> 1, weight 1), (0 -> 2, weight 1), (1 -> 0, weight 1), (2 -> 1, weight 1)
 A = np.array([[0, 1, 1],
