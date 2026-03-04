@@ -1,3 +1,5 @@
+import queue
+import time
 import numpy as np
 import random
 import networkx as nx
@@ -5,8 +7,47 @@ import matplotlib.pyplot as plt
 import pygame
 
 
+
+def order_bfs(graph, start_node):
+    visited  =  set()
+    q = queue.Queue()
+    q.put(start_node)
+
+    order = []
+
+    while not q.empty():
+        vertex = q.get()
+        if vertex not in visited:
+            order.append(vertex)
+            visited.add(vertex)
+            for node in graph[vertex]:
+                if node not in visited:
+                    q.put(node)
+
+    return order
+
+
+def visualize_search(order, title, G, pos, goal):
+    count = 0
+    plt.figure()
+    plt.title(title)
+    for i, node in enumerate(order, start=1):
+        count = count+1
+        if node == goal:
+            print(count)
+            return
+        plt.clf()
+        plt.title(title)
+        nx.draw(G,pos,with_labels = True, node_color=['r' if  n==node or n==goal else 'g' for n in G.nodes])
+        plt.draw()
+        plt.pause(0.5)
+
+    plt.show()
+    time.sleep(0.5)
+
+
 #PHASE 1: Board matrix
-board_size = 10
+board_size = 4
 total_spots = board_size * board_size
 board_matrix = np.zeros((board_size,board_size))
 
@@ -91,13 +132,6 @@ for i in range(board_size):
         graph_index = graph_index+1
        
 
-#   output the graph with networkx
-G = nx.from_numpy_array(graph_matrix, create_using=nx.DiGraph())
-
-pos = nx.spring_layout(G)
-nx.draw(G, pos, with_labels=True, node_color='skyblue', edge_color='black', arrows=True, connectionstyle='arc3, rad = 0.1')
-labels = nx.get_edge_attributes(G, 'weight')
-#plt.show()
 
 #PHASE 4: add player and goal
 player_index_x = random.randint(0, board_size-1)
@@ -105,26 +139,64 @@ player_index_y = random.randint(0, board_size-1)
 goal_index_x = random.randint(0, board_size-1)
 goal_index_y = random.randint(0, board_size-1)
 
+
+#will translate the location from matrix to graph
+player_graph_location = -1
+goal_graph_location = -1
+
 found = False
 while(not found):
+    #picks random spot
     player_index_x = random.randint(0, board_size-1)
     player_index_y = random.randint(0, board_size-1)
-    if(board_matrix[player_index_x][player_index_y] != 1):
+    
+    #checks if random location is  blocked
+    if(board_matrix[player_index_x][player_index_y] == 0):
+        
+        #sets player location for board  and graph
         board_matrix[player_index_x][player_index_y] = 2
+        player_graph_location = board_size*player_index_x + player_index_y
+        
+        #end loop
         found = True
+
 
     
 found = False
 while(not found):
+    #picks random spot
     goal_index_x = random.randint(0, board_size-1)
     goal_index_y = random.randint(0, board_size-1)
     
-    if(board_matrix[goal_index_x][goal_index_y] != 1):
+    #checks if random location is open
+    if(board_matrix[goal_index_x][goal_index_y] ==0):
+        
+        #sets goal location for board  and graph
         board_matrix[goal_index_x][goal_index_y] = 3
+        goal_graph_location  = board_size *  goal_index_x +  goal_index_y
+        
+        #end loop
         found = True
 
 print()
 print(board_matrix)
+
+#   output the graph with networkx
+G = nx.from_numpy_array(graph_matrix, create_using=nx.DiGraph())
+pos = nx.spring_layout(G)
+
+visualize_search(order_bfs(G,player_graph_location), "title", G, pos, goal_graph_location)
+
+"""
+nx.draw(G, pos, 
+            with_labels=True, 
+            node_color=['r' if n==goal_graph_location 
+                        or n==player_graph_location  
+                        else 'skyblue' for n in G.nodes], 
+            edge_color='black', 
+            arrows=True) 
+
+plt.show()
 
 
 
@@ -153,12 +225,12 @@ pygame.display.set_caption("Matrix Visualization")
 
 # 4. Function to draw a single square
 def create_square(x, y, color):
-    """Draws a rectangle at specified screen coordinates."""
+    #Draws a rectangle at specified screen coordinates.
     pygame.draw.rect(screen, color, [x, y, GRID_NODE_WIDTH, GRID_NODE_HEIGHT])
 
 # 5. Function to visualize the entire matrix
 def visualize_grid():
-    """Iterates through the matrix and draws squares based on values."""
+    #Iterates through the matrix and draws squares based on values.
     y = 0  # start at the top of the screen
     for row in board_matrix:
         x = 0  # for every row, start at the left of the screen again
@@ -174,7 +246,7 @@ def visualize_grid():
             x += GRID_NODE_WIDTH  # move one "step" to the right
         y += GRID_NODE_HEIGHT  # move one "step" downwards
 
-# 6. Main game loop
+
 running = True
 while running:
     # Event handling
@@ -189,7 +261,8 @@ while running:
     # Update the display
     pygame.display.update()
 
-# 7. Quit Pygame
+
 pygame.quit()
 
+"""
 
