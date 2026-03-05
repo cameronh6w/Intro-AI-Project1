@@ -1,3 +1,5 @@
+#this is sample code from a youtube video
+
 import queue
 import time
 import numpy as np
