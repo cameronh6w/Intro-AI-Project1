@@ -34,11 +34,11 @@ def create_board(board_size):
     return board_matrix
 
 
-def insert_visted_to_graph(visited, board_size,board_matrix):
+def insert_visted_to_graph(visited, board_size,board_matrix, number):
     y = visited % board_size
     x = (visited  - y)/board_size
 
-    board_matrix[int(x)][y] = 5
+    board_matrix[int(x)][y] = number
 
 
 def create_graph_matrix(board_size, board_matrix):

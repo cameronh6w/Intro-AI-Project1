@@ -46,7 +46,7 @@ print("node:",current)
 children = G.successors(current)
 for i in list(children):
     visible.put(i)
-    print("visible:",i)
+    #print("visible:",i)
     A.add_node(i)
     A.add_edge(current, i)
     order.append(i)
@@ -63,16 +63,21 @@ while(not visible.empty()):
         while not visible.empty():
             visible.get()
         break
+
+
+    if(len(order) > total_spots):
+        break
     
     current = visible.get()
-    print("node:",current)
+    #print("node:",current)
     children = G.successors(current)
     for i in list(children):
         visible.put(i)
-        print("visible:",i)
+        #print("visible:",i)
         A.add_node(i)
         A.add_edge(current, i)
-        order.append(i)
+        if(i not in order):
+            order.append(i)
 
 shortest_path = nx.shortest_path(A, source=player_graph_location, target=goal_graph_location)
 
@@ -134,6 +139,7 @@ def visualize_grid():
 
 running = True
 i = 0
+phase1= True
 while running:
     # Event handling
     for event in pygame.event.get():
@@ -144,12 +150,22 @@ while running:
     screen.fill(GRAY) # Fill background
 
     visualize_grid() # Draw the grid
-    time.sleep(0.5)
+    time.sleep(0.05)
 
-    insert_visted_to_graph(order[i],board_size, board_matrix)
+    if(phase1):
+        insert_visted_to_graph(order[i],board_size, board_matrix,4)
+        if (i<len(order)-1):
+            i = i+1
+    else:
+        insert_visted_to_graph(shortest_path[i],board_size, board_matrix,5)
+        if (i<len(shortest_path)-1):
+            i = i+1
 
-    if (i<len(order)-1):
-        i = i+1
+    
+    
+    if(i == len(order)-1 ):
+        i=0
+        phase1 = False
 
 
    
