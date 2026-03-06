@@ -87,7 +87,7 @@ def create_graph_matrix(board_size, board_matrix):
                 
             #increase index each time
             graph_index = graph_index+1
-       
+    print(graph_matrix)
     return graph_matrix
 
 
@@ -138,6 +138,7 @@ def order_bfs(graph, start_node):
         vertex = q.get()
         if vertex not in visited:
             order.append(vertex)
+            print(order)
             visited.add(vertex)
             for node in graph[vertex]:
                 if node not in visited:
