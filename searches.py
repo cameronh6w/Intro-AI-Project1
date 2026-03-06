@@ -49,4 +49,9 @@ A = np.array([[0, 1, 1,1,0,1],
               [1, 0, 0,1, 0, 0]])
 
 # 2. Create the directed graph from the NumPy array
-G = nx.from_numpy_array(
+G = nx.from_numpy_array(A, create_using=nx.DiGraph())
+pos = nx.spring_layout(G)
+
+visualize_search(order_bfs(G,0), "title", G, pos)
+
+    
